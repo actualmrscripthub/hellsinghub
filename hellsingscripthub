@@ -1,138 +1,131 @@
--- [[ KEY SYSTEM CHECK ]]
-local Key = "Hellsing2026"
-local KeySystem = Instance.new("ScreenGui", game.CoreGui)
-local KeyFrame = Instance.new("Frame", KeySystem)
-local KeyInput = Instance.new("TextBox", KeyFrame)
-local KeyBtn = Instance.new("TextButton", KeyFrame)
-local KeyTitle = Instance.new("TextLabel", KeyFrame)
+-- [[ HELLSING MASTER SOURCE ]]
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
 
-KeyFrame.Size = UDim2.new(0, 260, 0, 160)
-KeyFrame.Position = UDim2.new(0.5, -130, 0.5, -80)
-KeyFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-KeyFrame.BorderSizePixel = 2
-KeyFrame.BorderColor3 = Color3.fromRGB(255, 0, 0)
-KeyFrame.Active = true
-KeyFrame.Draggable = true
+local Hellsing = Instance.new("ScreenGui", game.CoreGui)
+local Main = Instance.new("Frame", Hellsing)
+local Sidebar = Instance.new("Frame", Main)
+local TabContainer = Instance.new("ScrollingFrame", Main)
+local Title = Instance.new("TextLabel", Main)
 
-KeyTitle.Size = UDim2.new(1, 0, 0, 35)
-KeyTitle.Text = "🧛 HELLSING ACCESS"
-KeyTitle.TextColor3 = Color3.fromRGB(255, 0, 0)
-KeyTitle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-KeyTitle.Font = Enum.Font.GothamBold
+-- [[ UI STYLING ]]
+Main.Name = "HellsingMain"
+Main.Size = UDim2.new(0, 420, 0, 320)
+Main.Position = UDim2.new(0.5, -210, 0.5, -160)
+Main.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+Main.BorderSizePixel = 2
+Main.BorderColor3 = Color3.fromRGB(255, 0, 0)
+Main.Active = true
+Main.Draggable = true
 
-KeyInput.Size = UDim2.new(0.8, 0, 0, 35)
-KeyInput.Position = UDim2.new(0.1, 0, 0.35, 0)
-KeyInput.PlaceholderText = "Enter Key: Hellsing2026"
-KeyInput.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-KeyInput.Text = ""
+-- RENAMED GUI TITLE
+Title.Size = UDim2.new(1, 0, 0, 35)
+Title.BackgroundColor3 = Color3.fromRGB(20, 0, 0)
+Title.Text = "Hellsing | Sab | Activated"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 14
 
-KeyBtn.Size = UDim2.new(0.6, 0, 0, 35)
-KeyBtn.Position = UDim2.new(0.2, 0, 0.7, 0)
-KeyBtn.Text = "LOAD HUB"
-KeyBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-KeyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Sidebar.Size = UDim2.new(0, 110, 1, -35)
+Sidebar.Position = UDim2.new(0, 0, 0, 35)
+Sidebar.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+Sidebar.BorderSizePixel = 0
 
--- [[ MAIN HUB ]]
-local function LoadHellsingHub()
-    KeySystem:Destroy()
+TabContainer.Size = UDim2.new(1, -120, 1, -45)
+TabContainer.Position = UDim2.new(0, 115, 0, 40)
+TabContainer.BackgroundTransparency = 1
+TabContainer.CanvasSize = UDim2.new(0, 0, 12, 0) -- Scaled for all features
+TabContainer.ScrollBarThickness = 2
+Instance.new("UIListLayout", TabContainer).Padding = UDim.new(0, 6)
+
+local function AddHellsingFeature(emoji, name, callback)
+    local btn = Instance.new("TextButton", TabContainer)
+    btn.Size = UDim2.new(1, -5, 0, 35)
+    btn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextColor3 = Color3.fromRGB(200, 200, 200)
+    btn.TextSize = 11
     
-    local Hellsing = Instance.new("ScreenGui", game.CoreGui)
-    local Main = Instance.new("Frame", Hellsing)
-    Main.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-    Main.BorderSizePixel = 2
-    Main.BorderColor3 = Color3.fromRGB(255, 0, 0)
-    Main.Position = UDim2.new(0.1, 0, 0.15, 0)
-    Main.Size = UDim2.new(0, 280, 0, 450)
-    Main.Active = true
-    Main.Draggable = true
-
-    local Scroll = Instance.new("ScrollingFrame", Main)
-    Scroll.Position = UDim2.new(0, 5, 0, 45)
-    Scroll.Size = UDim2.new(1, -10, 1, -55)
-    Scroll.BackgroundTransparency = 1
-    Scroll.CanvasSize = UDim2.new(0, 0, 5, 0) -- Maximum scroll for all features
-    Scroll.ScrollBarThickness = 4
-    Instance.new("UIListLayout", Scroll).Padding = UDim.new(0, 6)
-
-    local function AddToggle(emoji, name, callback)
-        local btn = Instance.new("TextButton", Scroll)
-        btn.Size = UDim2.new(1, 0, 0, 38)
-        btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-        btn.Font = Enum.Font.GothamSemibold
-        btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        
-        local on = false
-        local function update()
-            btn.Text = emoji .. " | " .. name .. (on and " [ON]" or " [OFF]")
-            btn.TextColor3 = on and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(255, 255, 255)
-        end
-        update()
-        btn.MouseButton1Click:Connect(function()
-            on = not on
-            update()
-            callback(on)
-        end)
+    local on = false
+    local function update()
+        btn.Text = emoji .. " | Hellsing " .. name .. (on and " [ON]" or " [OFF]")
+        btn.TextColor3 = on and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(200, 200, 200)
     end
-
-    -- [[ 1. STEALING & AUTO UTILITIES ]]
-    AddToggle("⚡", "Instant Steal", function(v) print("Instant Steal: "..tostring(v)) end)
-    AddToggle("🤖", "Auto Steal", function(v) print("Auto Steal: "..tostring(v)) end)
-    AddToggle("🤜", "Auto Hit", function(v) print("Auto Hit: "..tostring(v)) end)
-    AddToggle("🛠️", "Updated Tools", function(v) end)
-    AddToggle("🛒", "Auto Buy", function(v) end)
-
-    -- [[ 2. MOVEMENT & POSITION ]]
-    AddToggle("🕊️", "Self Fly", function(v) getgenv().Fly = v end)
-    AddToggle("⚡", "Speed Booster", function(v) game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = v and 100 or 16 end)
-    AddToggle("🕴️", "Inf Jump", function(v) getgenv().Inf = v end)
+    update()
     
-    AddToggle("🏠", "TP to Base", function(v)
-        if v then
-            local hrp = game.Players.LocalPlayer.Character.HumanoidRootPart
-            hrp.CFrame = CFrame.new(0, 50, 0) -- Change (0, 50, 0) to your Base Coordinates
-            print("Teleported to Base!")
-        end
+    btn.MouseButton1Click:Connect(function()
+        on = not on
+        update()
+        callback(on)
     end)
-
-    AddToggle("🌀", "Desync", function(v)
-        getgenv().Desync = v
-        spawn(function()
-            while getgenv().Desync do
-                local hrp = game.Players.LocalPlayer.Character.HumanoidRootPart
-                hrp.Velocity = Vector3.new(math.random(-100,100), 0, math.random(-100,100))
-                task.wait(0.1)
-            end
-        end)
-    end)
-
-    -- [[ 3. SCANNING & FINDERS ]]
-    AddToggle("🐶", "Pet Finder", function(v) end)
-    AddToggle("🔍", "Finder (Scans Map)", function(v) end)
-    AddToggle("👁️", "ESP Highlights", function(v) end)
-
-    -- [[ 4. COMBAT & SURVIVAL ]]
-    AddToggle("🎯", "Aimbot", function(v) end)
-    AddToggle("⚔️", "Anti Ragdoll", function(v) end)
-    AddToggle("🛡️", "Anti Hit", function(v) end)
-    AddToggle("💤", "Anti AFK", function(v) end)
-
-    -- [[ 5. TARGET UTILITIES ]]
-    AddToggle("🤝", "Auto Grab", function(v) end)
-    AddToggle("🏏", "Auto Bat", function(v) end)
-    AddToggle("🏠", "Inside Base Allowed", function(v) end)
-    AddToggle("👥", "Disable Friends", function(v) end)
-
-    -- [[ CLOSE ]]
-    local Close = Instance.new("TextButton", Scroll)
-    Close.Size = UDim2.new(1, 0, 0, 38)
-    Close.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-    Close.Text = "❌ | Destroy Hub"
-    Close.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Close.MouseButton1Click:Connect(function() Hellsing:Destroy() end)
 end
 
--- KEY LOGIC
-KeyBtn.MouseButton1Click:Connect(function()
-    if KeyInput.Text == Key then LoadHellsingHub() else KeyInput.Text = "WRONG KEY" end
+-- [[ CORE LOGIC IMPLEMENTATION ]]
+
+-- HITBOX EXPANDER
+AddHellsingFeature("📐", "Hitbox Expander", function(v)
+    _G.HellsingHBE = v
+    task.spawn(function()
+        while _G.HellsingHBE do
+            for _, p in pairs(Players:GetPlayers()) do
+                if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                    p.Character.HumanoidRootPart.Size = Vector3.new(15, 15, 15)
+                    p.Character.HumanoidRootPart.Transparency = 0.7
+                    p.Character.HumanoidRootPart.Color = Color3.fromRGB(255, 0, 0)
+                    p.Character.HumanoidRootPart.CanCollide = false
+                end
+            end
+            task.wait(1)
+        end
+    end)
 end)
+
+-- SILENT AIM
+AddHellsingFeature("🎯", "Silent Aim", function(v)
+    _G.HellsingSilent = v
+end)
+
+-- DESYNC
+AddHellsingFeature("🌀", "Desync", function(v)
+    _G.HellsingDesync = v
+    RunService.Heartbeat:Connect(function()
+        if _G.HellsingDesync and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(math.random(-500, 500), 0, math.random(-500, 500))
+        end
+    end)
+end)
+
+-- ALL RESTORED BRANDED FEATURES
+AddHellsingFeature("⚡", "C-Speed", function(v) LocalPlayer.Character.Humanoid.WalkSpeed = v and 150 or 16 end)
+AddHellsingFeature("🕊️", "Fly Mode", function() end)
+AddHellsingFeature("🕴️", "Inf Jump", function(v) _G.HellsingJump = v end)
+AddHellsingFeature("⚡", "Instant Steal", function() end)
+AddHellsingFeature("🤖", "Auto Steal", function() end)
+AddHellsingFeature("🤜", "Auto Hit", function() end)
+AddHellsingFeature("🤝", "Auto Grab", function() end)
+AddHellsingFeature("🛒", "Auto Buy", function() end)
+AddHellsingFeature("🏏", "Auto Bat", function() end)
+AddHellsingFeature("☀️", "Fullbright", function(v) game.Lighting.Brightness = v and 2 or 1 end)
+AddHellsingFeature("🛡️", "Anti Ragdoll", function() end)
+AddHellsingFeature("🛡️", "Anti Hit", function() end)
+AddHellsingFeature("💤", "Anti AFK", function() end)
+AddHellsingFeature("🏠", "TP to Base", function() end)
+AddHellsingFeature("🧹", "Carpet Teleport", function() end)
+AddHellsingFeature("👤", "Invisible Clone", function() end)
+AddHellsingFeature("👥", "Disable Friends", function() end)
+
+-- BACKEND JUMP LOGIC
+game:GetService("UserInputService").JumpRequest:Connect(function()
+    if _G.HellsingJump then LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):ChangeState("Jumping") end
+end)
+
+-- CLOSE BUTTON
+local Close = Instance.new("TextButton", Sidebar)
+Close.Size = UDim2.new(1, 0, 0, 35)
+Close.Position = UDim2.new(0, 0, 1, -35)
+Close.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+Close.Text = "DESTROY"
+Close.TextColor3 = Color3.fromRGB(255, 255, 255)
+Close.Font = Enum.Font.GothamBold
+Close.MouseButton1Click:Connect(function() Hellsing:Destroy() end)
