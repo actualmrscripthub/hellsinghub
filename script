@@ -1,6 +1,11 @@
+
+
 --!strict
 -- This is a LOCAL SCRIPT for Roblox.
--- To use as a loadstring, simply copy this entire code block.
+-- Designed to be compatible with Roblox exploit executors like Delta.
+
+-- Give the executor and game a moment to fully initialize.
+task.wait(0.5) 
 
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
@@ -10,13 +15,14 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterGui = game:GetService("StarterGui")
 
 local LocalPlayer = Players.LocalPlayer
+-- Wait for the character to load, as it's crucial for most features
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Humanoid = Character:WaitForChild("Humanoid")
 local RootPart = Character:WaitForChild("HumanoidRootPart")
 
 -- --- Configuration ---
-local DISCORD_LINK = "https://discord.gg/nhXwbum82" -- UPDATED Discord link
-local HUB_NAME = "HELLSING HUB DUELS"
+local DISCORD_LINK = "https://discord.gg/nhXwbum82"
+local HUB_NAME = "Hellsing Hub" -- Updated to "Hellsing Hub"
 local LOGO_FONT_ID = "rbxassetid://75505827253063" -- Custom font for "O HELLSING -HUB-"
 
 local DEFAULT_WALKSPEED = 16
@@ -31,79 +37,80 @@ local ITEM_NAMES_TO_GRAB = {"Coin", "Gem", "Pickup", "Loot"} -- <<< CUSTOMIZE TH
 -- Most of these features are NOT functionally implemented as exploits.
 -- Only the Speed Booster is functional.
 local features = {
--- General purpose flag, could be for tab management later
-mainHub = { enabled = true },
+    -- General purpose flag, could be for tab management later
+    mainHub = { enabled = true },
 
--- Stealer Feature (UI-only placeholder)
-stealer = {
-enabled = false,
-lastStealTime = 0,
-targetName = "Player", -- Placeholder for who to target
-itemName = "Brainrot" -- Placeholder for what to steal
-},
+    -- Stealer Feature (UI-only placeholder)
+    stealer = {
+        enabled = false,
+        lastStealTime = 0,
+        targetName = "Player", -- Placeholder for who to target
+        itemName = "Brainrot"  -- Placeholder for what to steal
+    },
 
--- Helper Feature (UI-only placeholder - e.g., noclip, fly, etc.)
-helper = { enabled = false },
+    -- Helper Feature (UI-only placeholder - e.g., noclip, fly, etc.)
+    helper = { enabled = false },
 
--- Player Feature (UI-only placeholder - e.g., god mode, infinite jump, etc.)
-player = { enabled = false },
+    -- Player Feature (UI-only placeholder - e.g., god mode, infinite jump, etc.)
+    player = { enabled = false },
 
--- Farm Feature (UI-only placeholder - e.g., auto-collect resources, auto-mine, etc.)
-farm = { enabled = false },
+    -- Farm Feature (UI-only placeholder - e.g., auto-collect resources, auto-mine, etc.)
+    farm = { enabled = false },
 
--- Auto Fish Feature (UI-only placeholder)
-autoFish = {
-enabled = false,
-lastActionTime = 0 -- For cooldowns
-},
+    -- Auto Fish Feature (UI-only placeholder)
+    autoFish = {
+        enabled = false,
+        lastActionTime = 0 -- For cooldowns
+    },
 
--- Auto Buy Best Rod Feature (UI-only placeholder)
-autoBuyBestRod = { enabled = false },
+    -- Auto Buy Best Rod Feature (UI-only placeholder)
+    autoBuyBestRod = { enabled = false },
 
--- Sell if less than M/s Feature (UI-only placeholder)
-sellIfLessThan = {
-enabled = false, -- Toggle for this feature
-value = 0 -- Threshold value (e.g., sell if current is less than this)
-},
+    -- Sell if less than M/s Feature (UI-only placeholder)
+    sellIfLessThan = {
+        enabled = false, -- Toggle for this feature
+        value = 0        -- Threshold value (e.g., sell if current is less than this)
+    },
 
--- Finder Feature (UI-only placeholder - e.g., ESP, item/player locator)
-finder = { enabled = false },
+    -- Finder Feature (UI-only placeholder - e.g., ESP, item/player locator)
+    finder = { enabled = false },
 
--- Server Feature (UI-only placeholder - e.g., server hop, server info)
-server = { enabled = false },
+    -- Server Feature (UI-only placeholder - e.g., server hop, server info)
+    server = { enabled = false },
 
--- Discord Link Display (UI element only, not a toggle)
-discord = { enabled = true },
+    -- Discord Link Display (UI element, not a toggle, but conceptually part of features)
+    discord = { enabled = true },
 
--- Auto Sell Pets Feature (UI-only placeholder)
-autoSellPets = {
-enabled = false,
-lastActionTime = 0 -- For cooldowns
-},
+    -- Auto Sell Pets Feature (UI-only placeholder)
+    autoSellPets = {
+        enabled = false,
+        lastActionTime = 0 -- For cooldowns
+    },
 
--- Auto Buy Brainrot Feature (UI-only placeholder)
-autoBuyBrainrot = {
-enabled = false,
-value = 10000 -- Default buy amount
-},
+    -- Auto Buy Brainrot Feature (UI-only placeholder)
+    autoBuyBrainrot = {
+        enabled = false,
+        value = 10000 -- Default buy amount
+    },
 
--- Speed Booster Feature (FUNCTIONAL)
-speedBooster = {
-enabled = false,
-value = 31 -- Default speed multiplier
-},
+    -- Speed Booster Feature (FUNCTIONAL)
+    speedBooster = {
+        enabled = false,
+        value = 31 -- Default speed multiplier
+    },
 
--- Auto Grab Feature (UI-only placeholder)
-autoGrab = {
-enabled = false,
-lastGrabTime = 0 -- For cooldowns
-}
+    -- Auto Grab Feature (UI-only placeholder)
+    autoGrab = {
+        enabled = false,
+        lastGrabTime = 0 -- For cooldowns
+    }
 }
 
 -- --- UI Creation ---
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "HellsingHubUI"
-ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+-- Ensure PlayerGui is loaded before parenting
+ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui") 
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 -- Hide the default Roblox topbar for a cleaner look
@@ -153,10 +160,10 @@ TextLogoLabel.BackgroundTransparency = 1
 TextLogoLabel.Parent = TopbarFrame
 TextLogoLabel.LayoutOrder = 1 -- Positions it on the left within the TopbarLayout
 
--- Hub Title Text (Can be adjusted or removed if logo is sufficient)
+-- Hub Title Text 
 local TitleText = Instance.new("TextLabel")
 TitleText.Size = UDim2.new(0, 150, 0, 40) -- Fixed size, adjust as needed
-TitleText.Text = HUB_NAME -- Displays "HELLSING HUB DUELS"
+TitleText.Text = HUB_NAME -- Displays "Hellsing Hub"
 TitleText.Font = Enum.Font.Roboto -- A clear, modern font
 TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
 TitleText.TextSize = 20
@@ -213,50 +220,50 @@ TabsLayout.Parent = TabsFrame
 
 -- --- Helper function for creating consistent Toggle UI elements ---
 local function createToggleUI(parent, labelText, settingRef, onToggleFunc)
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(1, -20, 0, 30) -- Width adjusted for padding
-frame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-frame.BorderSizePixel = 0
-frame.CornerRadius = UDim.new(0, 5)
-frame.Parent = parent
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(1, -20, 0, 30) -- Width adjusted for padding
+    frame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    frame.BorderSizePixel = 0
+    frame.CornerRadius = UDim.new(0, 5)
+    frame.Parent = parent
 
-local label = Instance.new("TextLabel")
-label.Size = UDim2.new(0.7, 0, 1, 0)
-label.Position = UDim2.new(0, 0, 0, 0)
-label.Text = labelText
-label.Font = Enum.Font.SourceSansBold
-label.TextColor3 = Color3.fromRGB(255, 255, 255)
-label.TextSize = 16
-label.TextXAlignment = Enum.TextXAlignment.Left
-label.BackgroundTransparency = 1
-label.Parent = frame
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(0.7, 0, 1, 0)
+    label.Position = UDim2.new(0, 0, 0, 0)
+    label.Text = labelText
+    label.Font = Enum.Font.SourceSansBold
+    label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    label.TextSize = 16
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.BackgroundTransparency = 1
+    label.Parent = frame
 
-local button = Instance.new("TextButton")
-button.Size = UDim2.new(0.3, 0, 1, 0)
-button.Position = UDim2.new(0.7, 0, 0, 0)
-button.Text = (settingRef.enabled and "ON" or "OFF")
-button.Font = Enum.Font.SourceSansBold
-button.TextColor3 = Color3.fromRGB(255, 255, 255)
-button.TextSize = 16
-button.BackgroundColor3 = (settingRef.enabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)) -- Green for ON, Red for OFF
-button.Parent = frame
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(0.3, 0, 1, 0)
+    button.Position = UDim2.new(0.7, 0, 0, 0)
+    button.Text = (settingRef.enabled and "ON" or "OFF")
+    button.Font = Enum.Font.SourceSansBold
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.TextSize = 16
+    button.BackgroundColor3 = (settingRef.enabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)) -- Green for ON, Red for OFF
+    button.Parent = frame
 
-button.MouseButton1Click:Connect(function()
-settingRef.enabled = not settingRef.enabled
-button.Text = (settingRef.enabled and "ON" or "OFF")
-button.BackgroundColor3 = (settingRef.enabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0))
-if onToggleFunc then
-onToggleFunc(settingRef.enabled)
-end
-end)
-return frame, label, button
+    button.MouseButton1Click:Connect(function()
+        settingRef.enabled = not settingRef.enabled
+        button.Text = (settingRef.enabled and "ON" or "OFF")
+        button.BackgroundColor3 = (settingRef.enabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0))
+        if onToggleFunc then
+            onToggleFunc(settingRef.enabled)
+        end
+    end)
+    return frame, label, button
 end
 
 -- --- Instantiate Feature Toggles and Input Fields ---
 
 -- Speed Booster (FUNCTIONAL)
 local SpeedToggleFrame, _, SpeedToggleButton = createToggleUI(TabsFrame, "SPEED BOOSTER", features.speedBooster, function(enabled)
-applySpeed()
+    applySpeed()
 end)
 -- Speed Multiplier Input
 local SpeedValueFrame = Instance.new("Frame")
@@ -336,7 +343,7 @@ SellLessTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 SellLessTextBox.TextSize = 16
 SellLessTextBox.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
 SellLessTextBox.ClearTextOnFocus = false
-SellLessTextBox.Parent = SellLessTextBox.Parent -- Changed from Parent to itself for some reason. Corrected.
+SellLessTextBox.Parent = SellLessFrame
 
 -- Finder (UI-only placeholder)
 local FinderToggleFrame, _, FinderToggleButton = createToggleUI(TabsFrame, "FINDER", features.finder)
@@ -389,61 +396,61 @@ AspectRatioConstraint.Parent = MainFrame
 
 -- FUNCTIONAL: Applies the speed booster setting to the Humanoid
 local function applySpeed()
-if Humanoid then
-if features.speedBooster.enabled then
-Humanoid.WalkSpeed = DEFAULT_WALKSPEED * features.speedBooster.value
-else
-Humanoid.WalkSpeed = DEFAULT_WALKSPEED
-end
-print("WalkSpeed set to: " .. Humanoid.WalkSpeed)
-end
+    if Humanoid then
+        if features.speedBooster.enabled then
+            Humanoid.WalkSpeed = DEFAULT_WALKSPEED * features.speedBooster.value
+        else
+            Humanoid.WalkSpeed = DEFAULT_WALKSPEED
+        end
+        print("WalkSpeed set to: " .. Humanoid.WalkSpeed)
+    end
 end
 
 -- FUNCTIONAL: Updates the speed multiplier from the textbox
 local function updateSpeedValue()
-local success, numValue = pcall(function() return tonumber(SpeedValueTextBox.Text) end)
-if success and numValue and numValue > 0 and numValue <= 100 then -- Clamp value for sanity
-features.speedBooster.value = numValue
-SpeedValueTextBox.Text = tostring(numValue)
-applySpeed()
-print("Speed multiplier updated to: " .. numValue)
-else
-warn("Invalid speed multiplier input:", SpeedValueTextBox.Text)
-SpeedValueTextBox.Text = tostring(features.speedBooster.value) -- Revert to last valid
-end
+    local success, numValue = pcall(function() return tonumber(SpeedValueTextBox.Text) end)
+    if success and numValue and numValue > 0 and numValue <= 100 then -- Clamp value for sanity
+        features.speedBooster.value = numValue
+        SpeedValueTextBox.Text = tostring(numValue)
+        applySpeed()
+        print("Speed multiplier updated to: " .. numValue)
+    else
+        warn("Invalid speed multiplier input:", SpeedValueTextBox.Text)
+        SpeedValueTextBox.Text = tostring(features.speedBooster.value) -- Revert to last valid
+    end
 end
 
 -- CONCEPTUAL: Function to attempt to steal a "Brainrot" (UI-only placeholder)
 local function attemptStealBrainrot()
-if features.stealer.enabled and RootPart and (os.time() - features.stealer.lastStealTime >= STEAL_COOLDOWN) then
-features.stealer.lastStealTime = os.time()
--- Implement game-specific logic here if you intend to make this functional with an executor.
--- This would involve finding targets, firing RemoteEvents, etc.
-print("Simulated steal attempt. Requires game-specific RemoteEvent and server validation.")
-end
+    if features.stealer.enabled and RootPart and (os.time() - features.stealer.lastStealTime >= STEAL_COOLDOWN) then
+        features.stealer.lastStealTime = os.time()
+        -- Implement game-specific logic here if you intend to make this functional with an executor.
+        -- This would involve finding targets, firing RemoteEvents, etc.
+        print("Simulated steal attempt. Requires game-specific RemoteEvent and server validation.")
+    end
 end
 
 -- CONCEPTUAL: Function to attempt to auto grab items (UI-only placeholder)
 local function attemptAutoGrab()
-if features.autoGrab.enabled and RootPart and (os.time() - features.autoGrab.lastGrabTime >= GRAB_COOLDOWN) then
-features.autoGrab.lastGrabTime = os.time()
--- Implement game-specific logic here if you intend to make this functional with an executor.
--- This would involve finding items, simulating interaction (touch/click), firing RemoteEvents.
-print("Simulated auto grab attempt. Requires game-specific logic.")
-end
+    if features.autoGrab.enabled and RootPart and (os.time() - features.autoGrab.lastGrabTime >= GRAB_COOLDOWN) then
+        features.autoGrab.lastGrabTime = os.time()
+        -- Implement game-specific logic here if you intend to make this functional with an executor.
+        -- This would involve finding items, simulating interaction (touch/click), firing RemoteEvents.
+        print("Simulated auto grab attempt. Requires game-specific logic.")
+    end
 end
 
 -- --- Event Connections ---
 
 -- Speed Booster connections
 SpeedToggleButton.MouseButton1Click:Connect(function()
-features.speedBooster.enabled = not features.speedBooster.enabled
-SpeedToggleButton.Text = (features.speedBooster.enabled and "ON" or "OFF")
-SpeedToggleButton.BackgroundColor3 = (features.speedBooster.enabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0))
-applySpeed()
+    features.speedBooster.enabled = not features.speedBooster.enabled
+    SpeedToggleButton.Text = (features.speedBooster.enabled and "ON" or "OFF")
+    SpeedToggleButton.BackgroundColor3 = (features.speedBooster.enabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0))
+    applySpeed()
 end)
 SpeedValueTextBox.FocusLost:Connect(function(enterPressed)
-if enterPressed then updateSpeedValue() end
+    if enterPressed then updateSpeedValue() end
 end)
 
 -- Toggle connections for all other conceptual features
@@ -461,72 +468,72 @@ AutoGrabToggleButton.MouseButton1Click:Connect(function() features.autoGrab.enab
 
 -- Input field connections for values
 SellLessTextBox.FocusLost:Connect(function(enterPressed)
-if enterPressed then
-local success, numValue = pcall(function() return tonumber(SellLessTextBox.Text) end)
-if success and numValue and numValue >= 0 then
-features.sellIfLessThan.value = numValue
-SellLessTextBox.Text = tostring(numValue)
-else
-warn("Invalid 'Sell if less than' input:", SellLessTextBox.Text)
-SellLessTextBox.Text = tostring(features.sellIfLessThan.value)
-end
-end
+    if enterPressed then
+        local success, numValue = pcall(function() return tonumber(SellLessTextBox.Text) end)
+        if success and numValue and numValue >= 0 then
+            features.sellIfLessThan.value = numValue
+            SellLessTextBox.Text = tostring(numValue)
+        else
+            warn("Invalid 'Sell if less than' input:", SellLessTextBox.Text)
+            SellLessTextBox.Text = tostring(features.sellIfLessThan.value)
+        end
+    end
 end)
 
 AutoBuyBrainrotValueTextBox.FocusLost:Connect(function(enterPressed)
-if enterPressed then
-local success, numValue = pcall(function() return tonumber(AutoBuyBrainrotValueTextBox.Text) end)
-if success and numValue and numValue > 0 then
-features.autoBuyBrainrot.value = numValue
-AutoBuyBrainrotValueTextBox.Text = tostring(numValue)
-else
-warn("Invalid 'Auto Buy Brainrot' input:", AutoBuyBrainrotValueTextBox.Text)
-AutoBuyBrainrotValueTextBox.Text = tostring(features.autoBuyBrainrot.value)
-end
-end
+    if enterPressed then
+        local success, numValue = pcall(function() return tonumber(AutoBuyBrainrotValueTextBox.Text) end)
+        if success and numValue and numValue > 0 then
+            features.autoBuyBrainrot.value = numValue
+            AutoBuyBrainrotValueTextBox.Text = tostring(numValue)
+        else
+            warn("Invalid 'Auto Buy Brainrot' input:", AutoBuyBrainrotValueTextBox.Text)
+            AutoBuyBrainrotValueTextBox.Text = tostring(features.autoBuyBrainrot.value)
+        end
+    end
 end)
 
 -- Re-apply speed if character respawns
 LocalPlayer.CharacterAdded:Connect(function(newCharacter)
-Character = newCharacter
-Humanoid = newCharacter:WaitForChild("Humanoid")
-RootPart = newCharacter:WaitForChild("HumanoidRootPart")
-Humanoid.WalkSpeed = DEFAULT_WALKSPEED -- Reset on spawn
-task.wait(0.1) -- Small delay to ensure Humanoid is fully ready
-applySpeed() -- Apply current booster setting
+    Character = newCharacter
+    Humanoid = newCharacter:WaitForChild("Humanoid")
+    RootPart = newCharacter:WaitForChild("HumanoidRootPart")
+    Humanoid.WalkSpeed = DEFAULT_WALKSPEED -- Reset on spawn
+    task.wait(0.1) -- Small delay to ensure Humanoid is fully ready
+    applySpeed() -- Apply current booster setting
 end)
 
 -- --- Main Loop for Auto Features (runs constantly) ---
 RunService.Stepped:Connect(function()
--- Ensure essential character parts exist before running loops
-if not Character or not RootPart or not Humanoid then return end
+    -- Ensure essential character parts exist before running loops
+    if not Character or not RootPart or not Humanoid then return end
 
-local currentTime = os.time()
+    local currentTime = os.time()
 
--- Auto Steal Logic (CONCEPTUAL)
-if features.stealer.enabled then
-attemptStealBrainrot() -- This function contains the placeholder logic.
-end
+    -- Auto Steal Logic (CONCEPTUAL)
+    if features.stealer.enabled then
+        attemptStealBrainrot() -- This function contains the placeholder logic.
+    end
 
--- Auto Grab Logic (CONCEPTUAL)
-if features.autoGrab.enabled then
-attemptAutoGrab() -- This function contains the placeholder logic.
-end
+    -- Auto Grab Logic (CONCEPTUAL)
+    if features.autoGrab.enabled then
+        attemptAutoGrab() -- This function contains the placeholder logic.
+    end
 
--- Add placeholder logic for other features here if you decide to implement them with an executor.
--- Example for Auto Fish:
--- if features.autoFish.enabled and (currentTime - features.autoFish.lastActionTime >= FISHING_COOLDOWN) then
--- features.autoFish.lastActionTime = currentTime
--- print("Simulating fishing action...")
--- -- Your executor-specific code for fishing here.
--- end
+    -- Add placeholder logic for other features here if you decide to implement them with an executor.
+    -- Example for Auto Fish:
+    -- if features.autoFish.enabled and (currentTime - features.autoFish.lastActionTime >= FISHING_COOLDOWN) then
+    --     features.autoFish.lastActionTime = currentTime
+    --     print("Simulating fishing action...")
+    --     -- Your executor-specific code for fishing here.
+    -- end
 
--- Example for Auto Sell Pets:
--- if features.autoSellPets.enabled and (currentTime - features.autoSellPets.lastActionTime >= SELL_COOLDOWN) then
--- features.autoSellPets.lastActionTime = currentTime
--- print("Simulating auto selling pets...")
--- -- Your executor-specific code for selling pets here.
--- end
+    -- Example for Auto Sell Pets:
+    -- if features.autoSellPets.enabled and (currentTime - features.autoSellPets.lastActionTime >= SELL_COOLDOWN) then
+    --     features.autoSellPets.lastActionTime = currentTime
+    --     print("Simulating auto selling pets...")
+    --     -- Your executor-specific code for selling pets here.
+    -- end
 end)
 
 -- Initial application of speed when the script first loads
@@ -537,12 +544,9 @@ print("Initial WalkSpeed: " .. Humanoid.WalkSpeed)
 
 -- Toggle UI visibility with a key (RightControl)
 UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-if gameProcessedEvent then return end -- Ignore if Roblox already processed this input
-if input.KeyCode == Enum.KeyCode.RightControl then
-MainFrame.Visible = not MainFrame.Visible
-print("UI Visibility Toggled: " .. tostring(MainFrame.Visible))
-end
+    if gameProcessedEvent then return end -- Ignore if Roblox already processed this input
+    if input.KeyCode == Enum.KeyCode.RightControl then
+        MainFrame.Visible = not MainFrame.Visible
+        print("UI Visibility Toggled: " .. tostring(MainFrame.Visible))
+    end
 end)
-
-
-
